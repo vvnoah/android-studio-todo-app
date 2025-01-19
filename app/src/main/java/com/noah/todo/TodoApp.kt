@@ -34,10 +34,8 @@ import com.noah.todo.ui.screens.TodoAddScreen
 import com.noah.todo.ui.screens.TodoDetailsScreen
 import com.noah.todo.ui.screens.TodoEditScreen
 import com.noah.todo.ui.screens.TodoListScreen
-import com.noah.todo.viewmodels.TodoAddViewModel
-import com.noah.todo.viewmodels.TodoDetailsViewModel
-import com.noah.todo.viewmodels.TodoEditViewModel
 import com.noah.todo.viewmodels.TodoListViewModel
+import com.noah.todo.viewmodels.TodoViewModel
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -96,7 +94,9 @@ fun TodoApp(
         NavHost(
             navController = navController,
             startDestination = TodoList,
-            modifier = Modifier.fillMaxSize().padding(innerPadding)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
         ) {
             composable<TodoList> {
                 val app = LocalContext.current.applicationContext as Application
@@ -132,40 +132,29 @@ fun TodoApp(
 
             composable<TodoAdd> {
                 val app = LocalContext.current.applicationContext as Application
-                val viewmodel:TodoAddViewModel = viewModel() {
-                    TodoAddViewModel(app)
+                val viewmodel:TodoViewModel = viewModel() {
+                    TodoViewModel(app)
                 }
 
-                val doneClick = {
-                    viewmodel.saveTodo()
-                    val bruh = navController.navigateUp()
-                }
-
-                TodoAddScreen(viewmodel, doneClick)
+                TodoAddScreen(
+                    viewmodel = viewmodel,
+                    insertClick = { navController.navigateUp() }
+                )
             }
 
             composable<TodoDetails> { backStackEntry ->
                 val args:TodoDetails = backStackEntry.toRoute<TodoDetails>()
 
                 val app = LocalContext.current.applicationContext as Application
-                val viewmodel:TodoDetailsViewModel = viewModel() {
-                    TodoDetailsViewModel(app)
+                val viewmodel:TodoViewModel = viewModel() {
+                    TodoViewModel(app)
                 }
 
-                viewmodel.loadTodoById(args.id)
-
-                val checkTodoClick = { todo:TodoModel ->
-                    viewmodel.updateTodoCompletion(todo)
-                }
-
-                val editTodoClick = { todo:TodoModel ->
-                    navController.navigate(TodoEdit(todo.id))
-                }
+                viewmodel.getTodoById(args.id)
 
                 TodoDetailsScreen(
-                    viewmodel,
-                    checkTodoClick,
-                    editTodoClick,
+                    viewmodel = viewmodel,
+                    editClick = { navController.navigate(TodoEdit(args.id)) }
                 )
             }
 
@@ -173,20 +162,15 @@ fun TodoApp(
                 val args:TodoDetails = backStackEntry.toRoute<TodoDetails>()
 
                 val app = LocalContext.current.applicationContext as Application
-                val viewmodel:TodoEditViewModel = viewModel() {
-                    TodoEditViewModel(app)
+                val viewmodel:TodoViewModel = viewModel() {
+                    TodoViewModel(app)
                 }
 
-                viewmodel.loadTodoById(args.id)
-
-                val doneClick = { todo:TodoModel ->
-                    viewmodel.saveTodo(todo)
-                    val bruh = navController.navigateUp()
-                }
+                viewmodel.getTodoById(args.id)
 
                 TodoEditScreen(
-                    viewmodel,
-                    doneClick
+                    viewmodel = viewmodel,
+                    updateClick = { navController.navigateUp() },
                 )
             }
         }

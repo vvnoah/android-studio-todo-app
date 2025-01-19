@@ -1,6 +1,5 @@
 package com.noah.todo.ui.screens
 
-import android.app.DatePickerDialog
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,9 +7,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material3.CalendarLocale
-import androidx.compose.material3.DatePicker
-import androidx.compose.material3.DatePickerState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedTextField
@@ -18,24 +15,35 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.noah.todo.R
-import com.noah.todo.models.TodoModel
-import com.noah.todo.viewmodels.TodoAddViewModel
-import com.noah.todo.viewmodels.TodoEditViewModel
+import com.noah.todo.viewmodels.TodoViewModel
 
 @Composable
 fun TodoEditScreen(
-    viewmodel: TodoEditViewModel,
-    doneClick: (TodoModel) -> Unit
+    viewmodel: TodoViewModel,
+    updateClick: () -> Unit
 ) {
-    var todo = viewmodel.todo
-    if(todo == null) return
+    val todoState = viewmodel.todoState
+
+    if(todoState.loading) {
+        CircularProgressIndicator(modifier = Modifier.fillMaxSize())
+    }
+
+    if(todoState.error != null) {
+        Text(text = "Error: ${todoState.error}", color = Color.Red)
+        return
+    }
+
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = {doneClick(viewmodel.todo!!)}
+                onClick = {
+                    viewmodel.updateTodo()
+                    updateClick()
+                }
             ) {
                 Icon(Icons.Default.Done, contentDescription = stringResource(R.string.done))
             }
@@ -47,15 +55,16 @@ fun TodoEditScreen(
                 .padding(horizontal = 8.dp)
         ) {
             OutlinedTextField(
-                value = viewmodel.todo!!.title, label = { Text(stringResource(R.string.title)) },
-                onValueChange = {viewmodel.todo = todo!!.copy(title = it)},
+                value = todoState.title,
+                onValueChange = viewmodel::updateTitle,
+                label = { Text(stringResource(R.string.title)) },
                 modifier = Modifier.fillMaxWidth().padding(vertical = 8.dp)
             )
             OutlinedTextField(
+                value = todoState.content,
+                onValueChange = viewmodel::updateContent,
+                label = { Text(stringResource(R.string.content)) },
                 modifier = Modifier.fillMaxWidth().height(300.dp),
-                value = viewmodel.todo!!.content,
-                onValueChange = { viewmodel.todo = todo!!.copy(content = it) },
-                label = { Text(stringResource(R.string.content)) }
             )
         }
     }
