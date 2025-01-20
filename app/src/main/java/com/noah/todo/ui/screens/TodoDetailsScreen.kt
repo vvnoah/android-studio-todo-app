@@ -4,9 +4,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.Card
+import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.FloatingActionButton
@@ -54,28 +57,47 @@ fun TodoDetailsScreen(
         Column(
             modifier = Modifier
                 .padding(innerPadding)
-                .padding(horizontal = 8.dp)
+                .fillMaxSize()
+                .padding(4.dp, 8.dp)
         ) {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.padding(vertical = 8.dp)
+            Card(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
             ) {
-                Checkbox(
-                    todoState.completion,
-                    { isChecked -> viewmodel.updateCompletion(isChecked) }
-                )
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .padding(8.dp)
+                        .fillMaxWidth()
+                ) {
+                    Checkbox(
+                        todoState.completion,
+                        { isChecked -> viewmodel.updateCompletion(isChecked) }
+                    )
+                    Text(
+                        text = todoState.title,
+                        fontWeight = FontWeight.Bold,
+                        fontSize = 24.sp,
+                        textDecoration = if (todoState.completion) TextDecoration.LineThrough else TextDecoration.None
+                    )
+                }
+            }
+            Card(
+                modifier = Modifier
+                    .padding(8.dp)
+                    .fillMaxWidth()
+                    .height(300.dp),
+                elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
+            ) {
                 Text(
-                    text = todoState.title,
+                    text = todoState.content,
                     fontWeight = FontWeight.Bold,
-                    fontSize = 24.sp,
-                    textDecoration = if (todoState.completion) TextDecoration.LineThrough else TextDecoration.None
+                    fontSize = 20.sp,
+                    modifier = Modifier.padding(16.dp)
                 )
             }
-            OutlinedTextField(
-                todoState.content, onValueChange = {},
-                readOnly = true, label = { Text(stringResource(R.string.content)) },
-                modifier = Modifier.fillMaxWidth()
-            )
         }
     }
 }
