@@ -106,28 +106,21 @@ fun TodoApp(
 
                 viewmodel.loadTodos()
 
-                val addTodoClick = {
-                    navController.navigate(TodoAdd)
-                }
-
-                val detailsTodoClick = { todo:TodoModel ->
-                    navController.navigate(TodoDetails(todo.id))
-                }
-
-                val checkTodoClick = { todo:TodoModel ->
-                    viewmodel.updateTodoCompletion(todo)
-                }
-
-                val deleteTodoClick = { todo:TodoModel ->
-                    viewmodel.deleteTodo(todo)
-                }
-
                 TodoListScreen(
-                    viewmodel,
-                    addTodoClick,
-                    checkTodoClick,
-                    detailsTodoClick,
-                    deleteTodoClick)
+                    viewmodel = viewmodel,
+                    addClick = {
+                        navController.navigate(TodoAdd)
+                    },
+                    checkClick = { todo:TodoModel ->
+                        viewmodel.updateTodoCompletion(todo)
+                    },
+                    detailsClick = { todo:TodoModel ->
+                        navController.navigate(TodoDetails(todo.id))
+                    },
+                    deleteClick = {todo:TodoModel ->
+                        viewmodel.deleteTodo(todo)
+                    }
+                )
             }
 
             composable<TodoAdd> {

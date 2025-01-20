@@ -53,7 +53,7 @@ fun TodoAddScreen(
             modifier = Modifier
                 .padding(innerPadding)
                 .fillMaxSize()
-                .padding(4.dp, 8.dp)
+                .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
             OutlinedTextField(
                 value = todoState.title,

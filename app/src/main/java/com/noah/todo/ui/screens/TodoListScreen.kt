@@ -35,15 +35,15 @@ import com.noah.todo.viewmodels.TodoListViewModel
 @Composable
 fun TodoListScreen(
     viewmodel:TodoListViewModel,
-    addTodoClick:() -> Unit,
-    checkTodoClick:(TodoModel) -> Unit,
-    detailsTodoClick:(TodoModel) -> Unit,
-    deleteTodoClick:(TodoModel) -> Unit
+    addClick:() -> Unit,
+    checkClick:(TodoModel) -> Unit,
+    detailsClick:(TodoModel) -> Unit,
+    deleteClick:(TodoModel) -> Unit
 ) {
     Scaffold(
         floatingActionButton = {
             FloatingActionButton(
-                onClick = addTodoClick
+                onClick = addClick
             ) {
                 Icon(Icons.Default.Add, contentDescription = stringResource(R.string.todo_add))
             }
@@ -61,7 +61,7 @@ fun TodoListScreen(
                         modifier = Modifier
                             .padding(8.dp)
                             .fillMaxWidth()
-                            .clickable { detailsTodoClick(todo) },
+                            .clickable { detailsClick(todo) },
                         elevation = CardDefaults.cardElevation(defaultElevation = 5.dp)
                     ){
                         Row(
@@ -73,7 +73,7 @@ fun TodoListScreen(
                             Row(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Checkbox(todo.completion, { checkTodoClick(todo) })
+                                Checkbox(todo.completion, { checkClick(todo) })
                                 Text(
                                     text = todo.title,
                                     fontWeight = FontWeight.Bold,
@@ -83,7 +83,7 @@ fun TodoListScreen(
                             }
                             Column {
                                 Row {
-                                    IconButton(onClick = { deleteTodoClick(todo) }) {
+                                    IconButton(onClick = { deleteClick(todo) }) {
                                         Icon(
                                             Icons.Default.Delete,
                                             contentDescription = stringResource(R.string.todo_delete))
